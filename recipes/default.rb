@@ -47,6 +47,6 @@ when "ubuntu", "debian"
   end
 end
 
-
-iptables_rule "all_established"
-iptables_rule "all_icmp"
+node['iptables']['roles'].each {|role| 
+  iptables_rule "#{role}"
+}
