@@ -36,7 +36,7 @@ template "/usr/sbin/rebuild-iptables" do
   )
 end
 
-case node[:platform]
+case node["platform"]
 when "ubuntu", "debian"
   iptables_save_file = "/etc/iptables/general"
 
@@ -48,5 +48,5 @@ when "ubuntu", "debian"
 end
 
 node['iptables']['roles'].each {|role| 
-  iptables_rule "#{role}"
+  iptables_rule #{role}
 }
