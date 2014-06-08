@@ -22,6 +22,7 @@ package "iptables"
 execute "rebuild-iptables" do
   command "/usr/sbin/rebuild-iptables"
   action :nothing
+  retries 3
 end
 
 directory "/etc/iptables.d" do
@@ -32,7 +33,7 @@ template "/usr/sbin/rebuild-iptables" do
   source "rebuild-iptables.erb"
   mode 0755
   variables(
-    :hashbang => ::File.exist?('/usr/bin/ruby') ? '/usr/bin/ruby' : '/opt/chef/embedded/bin/ruby'
+    :hashbang => ::File.exist?('/usr/bin/ruby') ? '/usr/bin/ruby' : '/opt/vagrant_ruby/bin/ruby'
   )
 end
 
@@ -47,6 +48,16 @@ when "ubuntu", "debian"
   end
 end
 
-node['iptables']['roles'].each {|role| 
-  iptables_rule #{role}
-}
+# Allows iptables to be managed by attribute instead of
+# being called explicitly in other recipes
+if node['iptables']['roles'].length > 0 then
+  node['iptables']['roles'].each {|role| 
+    iptables_rule "#{role}"
+  }
+end
+
+# iptables can also be changed by requiring iptables
+# and executing 'iptables_rule "rule_name" ' within
+# another recipe. See below for examples
+#iptables_rule "all_established"
+#iptables_rule "all_icmp"
