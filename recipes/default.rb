@@ -22,7 +22,6 @@ package "iptables"
 execute "rebuild-iptables" do
   command "/usr/sbin/rebuild-iptables"
   action :nothing
-  retries 3
 end
 
 directory "/etc/iptables.d" do
