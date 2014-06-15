@@ -28,14 +28,11 @@ directory "/etc/iptables.d" do
   action :create
 end
 
-ruby_path = `which ruby`
-raise if ruby_path.length == 0
-
 template "/usr/sbin/rebuild-iptables" do
   source "rebuild-iptables.erb"
   mode 0755
   variables(
-    :hashbang => "#{ruby_path}"
+    :hashbang => `which ruby`.gsub("\n","")
   )
 end
 
